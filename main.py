@@ -1,15 +1,27 @@
 from fastapi import FastAPI
+from app.config.database import engine, Base
+from app.controllers import user_controller
+from core.middlewares import cors_middleware
+from contextlib import asynccontextmanager
+import logging
 
-app = FastAPI()
+#로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title ="FASTAPI MVC EXAMPLE",version = "1.0.0") # api for json
+
+app.include_router(user_controller.router, prefix = "/api/v1")
+
+# add middlewares
+cors_middleware.add(app)
 
 @app.get("/")
 def read_root():
-    return {"message":"Hello,World"}
+    return {"message":"Welcome to FastAPI"}
 
-@app.get("/items/{item_id}")
-def rad_item(item_id:int):
-    return {"item_id": item_id}
-
-@app.get("/items/")
-def read_items(skip=0,limit=1):    
-    return{"skip":skip,"limit":limit}
+if __name__=="__main__":
+    import uvicorn
+    uvicorn.run(app, host= "0.0.0.0", prot=8000)

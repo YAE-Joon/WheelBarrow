@@ -1,38 +1,25 @@
-from models.db import UserDb
-from core.db_context import session_maker
+from sqlalchemy.orm import Session
+from app.models.user import User
+from typing import List, Optional
 
+# Spring의 @Repository와 동일한 역할
+# JpaRepository<User, Long>를 구현한 것과 유사
+class UserRepository:
+    def __init__(self,db:Session): # Spring의 EntityManager 주입과 유사
+        self.db = db
 
-def add(user: UserDb)-> UserDb:
-    with session_maker.begin() as session:
-        session.add(user)
-        return user
+    # Spring의 save() 메서드와 유사
+    def create(self, user_data:dict) -> User:
+        db_user = User(**user_data)
+        self.db.add(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
+        return db_user
+    
+    #Id로 User Id 가져오기
+    def get_by_id(self, id_num:int) -> Optional[User]:
+        return self.db.query(User).filter(User.id==id_num).first()
 
-def update(user: UserDb) -> None:
-    with session_maker.begin() as session:
-        session.query(UserDb).filter(UserDb.id == user.id).update({
-            UserDb.name: user.name,
-            UserDb.surname: user.surname,
-            UserDb.role: user.role,
-            UserDb.email: user.email,
-            UserDb.password: user.password
-        })
-
-def delete(id: int) -> None:
-    with session_maker.begin() as session:
-        session.query(UserDb).filter(UserDb.id == id).delete()
-
-def get(limit:int = 1000, offset: int = 0) -> list[UserDb]:
-    with session_maker() as session:
-        return session.query(UserDb).limit(limit).offset(offset).all()
-
-def get_by_id(id: int) -> UserDb | None:
-    with session_maker() as session:
-        return session.query(UserDb).where(
-            UserDb.id == id
-        ).first()
-
-def get_by_email(email: str) -> UserDb | None:
-    with session_maker.begin() as session:
-        return session.query(UserDb).where(
-            UserDb.email == email
-        ).first()
+    #user_id로 user 가져오기
+    def get_by_user_id(self, user_id:str) -> Optional[User]:
+        return self.db.query(User).filter(User.user_id==user_id).first()

@@ -1,36 +1,31 @@
-from __future__ import annotations
+from pydantic_setting import BaseSettings
+from tpying import Optional
+import os
 
-from dataclasses import dataclass
-from datetime import timedelta
-from os import getenv
+class Settings(BaseSettings):
+    # 데이터베이스 설정
+    db_host:str
+    db_port:int
+    db_user:str
+    db_password:str
+    db_name:str
+    database_url:Optional[str] = None
 
+    #애플리케이션 설정
+    debug: bool
+    secret_key : str
 
-def _get_from_env(var_name: str) -> str:
-    value = getenv(var_name)
-    if value is None:
-        raise ValueError(f"Environment variable '{var_name}' must be set.")
-    return value
+    class Config:
+        env_file =".env"
+        case_sensitive = False
+        #.env 없으면 에러발생
+        env_file_encoding = 'utf-8'
 
-@dataclass(frozen=True)
-class Config:
-    DB_CONNECTION_STRING: str
-    COOKIES_KEY_NAME: str
-    SESSION_TIME: timedelta
-    HASH_SALT: str
-
-    @staticmethod
-    def get_config() -> Config:
-        db_connection_string = getenv("DB_CONNECTION_STRING", "sqlite:///db.sqlite")
-        if db_connection_string == "":
-            raise ValueError(
-                "Environment variable 'DB_CONNECTION_STRING' must be set and cannot be empty. "
-            )
-
-        cookies_key_name = "session_token"
-        session_time = timedelta(days=30)
-        hash_salt = getenv("HASH_SALT", "SomeRandomStringHere")
-
-        return Config(db_connection_string, cookies_key_name, session_time, hash_salt)
-
-
-CONFIG = Config.get_config()
+    @property
+    def db_url(self) ->str:
+        """DATABASE_URL이 있으면 우선 사용, 없으면 개별 설정으로 구성"""
+        if self.database_url:
+            return self.database_url
+        return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+#전역 인스턴스
+settings = Settings()
