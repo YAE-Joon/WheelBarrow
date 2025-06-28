@@ -1,4 +1,5 @@
-from sqlalchemy import Column,Integer,String,DateTime
+from sqlalchemy import Column,Integer,String,TIMESTAMP
+from sqlalchemy import relationship
 from sqlalchemy.sql import func
 from app.config.database import Base
 
@@ -16,5 +17,6 @@ class User(Base):
     password = Column(String)
 
     # Spring의 @CreationTimestamp와 유사
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable= False)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable= False)
 
+    # works = relationship("work",back_populates = "user")
