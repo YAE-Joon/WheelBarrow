@@ -16,7 +16,7 @@ engine = create_engine(DATABASE_URL)
 
 
 # 세션 로컬 클래스 생성 (Spring의 EntityManager와 유사)
-SessionLocal = sessionmaker (autocommit = False,autoFlush=False, bind=engine)
+SessionLocal = sessionmaker (autocommit = False,autoflush=False, bind=engine)
 
 #Base 클래스 생성 (JPA의 @Entity 상속용)
 Base = declarative_base()

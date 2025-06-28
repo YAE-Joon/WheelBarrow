@@ -1,4 +1,4 @@
-from sqlachemy import Column,Integer,String,DateTime
+from sqlalchemy import Column,Integer,String,DateTime
 from sqlalchemy.sql import func
 from app.config.database import Base
 
@@ -13,8 +13,8 @@ class User(Base):
     # Spring의 @Column과 유사
     user_id = Column(String,unique=True ,index = True)
     username = Column(String, index = True)
-    passward = Column(String)
+    password = Column(String)
 
     # Spring의 @CreationTimestamp와 유사
-    create_at = Column(DateTime(timezone=True), server_defualt=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable= False)
 

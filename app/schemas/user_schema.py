@@ -14,7 +14,7 @@ class UserCreate(UserBase):
 # Spring의 응답 DTO (ResponseDTO)dhk dbtk
 class UserResponse(UserBase):
     id : int
-    create_at : datetime
+    created_at : datetime
 
     class Config:
         from_attributes = True

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.config.database import engine, Base
 from app.controllers import user_controller
-from core.middlewares import cors_middleware
+from app.core.middlewares import cors_middleware
 from contextlib import asynccontextmanager
 import logging
 
@@ -24,4 +24,4 @@ def read_root():
 
 if __name__=="__main__":
     import uvicorn
-    uvicorn.run(app, host= "0.0.0.0", prot=8000)
+    uvicorn.run(app, host= "0.0.0.0", port=8000)

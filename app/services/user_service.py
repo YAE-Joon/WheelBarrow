@@ -17,6 +17,5 @@ class UserService:
         return self.user_repo.create(user.dict())
 
     def get_user(self, user_id:str) -> Optional[User]:
-        self.user_repo.get_by_user_id(user_id)
         return self.user_repo.get_by_user_id(user_id)
         
