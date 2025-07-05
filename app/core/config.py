@@ -1,5 +1,5 @@
-from pydantic_setting import BaseSettings
-from tpying import Optional
+from pydantic_settings import BaseSettings
+from typing import Optional
 import os
 
 class Settings(BaseSettings):

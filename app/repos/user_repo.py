@@ -9,8 +9,8 @@ class UserRepository:
         self.db = db
 
     # Spring의 save() 메서드와 유사
-    def create(self, user_data:dict) -> User:
-        db_user = User(**user_data)
+    def create(self, user_dict: dict) -> User:
+        db_user = User(**user_dict)
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)

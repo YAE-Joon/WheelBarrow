@@ -1,8 +1,9 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from dotenv import load_dotenv
+from typing import Generator
 
 
 # 환경변수 로드(Spring의 application.properties와 유사)
@@ -21,7 +22,7 @@ SessionLocal = sessionmaker (autocommit = False,autoflush=False, bind=engine)
 #Base 클래스 생성 (JPA의 @Entity 상속용)
 Base = declarative_base()
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
