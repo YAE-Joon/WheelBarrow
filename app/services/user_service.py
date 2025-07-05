@@ -14,7 +14,7 @@ class UserService:
         existed_user = self.user_repo.get_by_user_id(user.user_id)
         if existed_user:
             raise ValueError("Id가 존재합니다.") 
-        return self.user_repo.create(user.dict())
+        return self.user_repo.create(user.model_dump())
 
     def get_user(self, user_id:str) -> Optional[User]:
         return self.user_repo.get_by_user_id(user_id)

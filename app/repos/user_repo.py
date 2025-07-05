@@ -10,15 +10,10 @@ class UserRepository:
 
     # Spring의 save() 메서드와 유사
     def create(self, user_data:dict) -> User:
-        print(f"입력 데이터: {user_data}")
         db_user = User(**user_data)
-        print(f"생성 직후 created_at: {db_user.created_at}")
         self.db.add(db_user)
-        print(f"add 후 created_at: {db_user.created_at}")
         self.db.commit()
-        print(f"commit 후 created_at: {db_user.created_at}")
         self.db.refresh(db_user)
-        print(f"refresh 후 created_at: {db_user.created_at}")
         return db_user
     
     #Id로 User Id 가져오기
