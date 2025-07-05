@@ -9,10 +9,11 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     level = Column(Integer)
+    path = Column(String(1000), unique =True, nullable=False)
     name = Column(String)
     content = Column(String)
     parent_id = Column(Integer)
-    end_at = Column(TIMESTAMP)
-    created_at = Column(TIMESTAMP)
+    end_at = Column(TIMESTAMP(timezone=True), nullabe = True)
+    created_at = Column(TIMESTAMP, server_default=func.now(),nullable=False)
 
     works = relationship("Work",back_populates="category")

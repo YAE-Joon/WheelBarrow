@@ -30,7 +30,7 @@ SessionLocal = sessionmaker(
 #베이스 모델 클래스
 Base = declarative_base()
 
-def get_db() -> Session:
+def get_db():
     """
     데이터베이스 세션 의존성
     Spring Boot의 @Autowired EntityManager와 유사
