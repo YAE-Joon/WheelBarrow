@@ -1,5 +1,5 @@
 from sqlalchemy import Column,Integer,String,TIMESTAMP,Boolean,ForeignKey
-from sqlalchemy import relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.config.database import Base
 
@@ -21,4 +21,4 @@ class Work(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable= False)
     deleted_at = Column(TIMESTAMP)
 
-    user = relationship("User",back_populates = "works")
+    user = relationship("User",back_populates = "works", viewonly=True)
