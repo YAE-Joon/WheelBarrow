@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.config.database import engine, Base
 from app.controllers import user_controller
+from app.controllers import category_controller
 from app.core.middlewares import cors_middleware
 from contextlib import asynccontextmanager
 import logging
@@ -9,11 +10,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title ="FASTAPI MVC EXAMPLE",version = "1.0.0") # api for json
 
 app.include_router(user_controller.router, prefix = "/api/v1")
+app.include_router(category_controller.router, prefix = "/api/v1")
 
 # add middlewares
 cors_middleware.add(app)

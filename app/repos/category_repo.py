@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from app.models.user import User
 from app.models.category import Category
 from typing import List, Optional
 
@@ -16,3 +15,13 @@ class CategoryRepository:
         self.db.commit()
         self.db.refresh(db_category)
         return db_category
+    
+    def find_id_by_path(self, path: str,user_id:int) -> Optional[int]:
+        """경로로 카테고리 ID 조회"""
+        result =  self.db.query(Category.id).filter(
+            Category.path == path,
+            Category.user_id == user_id
+            ).first()
+        return result[0] if result else None
+    
+    

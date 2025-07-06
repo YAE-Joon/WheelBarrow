@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker, Session
 from dotenv import load_dotenv
 from typing import Iterator
 
-
 # 환경변수 로드(Spring의 application.properties와 유사)
 load_dotenv()
 
@@ -15,11 +14,10 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # SQLAlchemy 엔진 생성 (Spring의 DataSource와 유사)
 engine = create_engine(DATABASE_URL)
 
-
 # 세션 로컬 클래스 생성 (Spring의 EntityManager와 유사)
-SessionLocal = sessionmaker (autocommit = False,autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-#Base 클래스 생성 (JPA의 @Entity 상속용)
+# Base 클래스 생성 (JPA의 @Entity 상속용)
 Base = declarative_base()
 
 def get_db() -> Iterator[Session]:
@@ -28,3 +26,6 @@ def get_db() -> Iterator[Session]:
         yield db
     finally:
         db.close()
+
+# 🔥 모든 모델을 import해서 SQLAlchemy가 인식하도록 함
+from models import User, Category, Work
