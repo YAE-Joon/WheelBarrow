@@ -24,4 +24,17 @@ class CategoryRepository:
             ).first()
         return result[0] if result else None
     
-    
+    def find_category_by_level0(self, user_id:int) -> Optional[dict]:
+
+        result = self.db.query(Category.id,Category.name).filter(
+            Category.level ==0,
+            Category.user_id == user_id
+        ).all()
+
+        if not result:
+            return None
+        # 튜플 리스트를 딕셔너리로 변환
+        categories = {}
+        for row in result:
+            categories[row[0]] = row[1] #{id : name}
+        return categories

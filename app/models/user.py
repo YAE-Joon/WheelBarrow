@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from config.database import Base
+from app.config.database import Base
 
 # Spring의 @Entity와 동일한 역할
 class User(Base):
@@ -19,5 +19,5 @@ class User(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
 
     # 관계 설정 - 문자열로 참조해서 순환 import 방지
-    works = relationship("Work", back_populates="user")
+    works = relationship("Work",back_populates="user")
     categories = relationship("Category", back_populates="user")

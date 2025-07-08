@@ -28,4 +28,4 @@ def get_db() -> Iterator[Session]:
         db.close()
 
 # 🔥 모든 모델을 import해서 SQLAlchemy가 인식하도록 함
-from models import User, Category, Work
+from app.models import User, Category, Work

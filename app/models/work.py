@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from config.database import Base
+from app.config.database import Base
 
 # Spring의 @Entity와 동일한 역할
 class Work(Base):
@@ -22,7 +22,7 @@ class Work(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     title = Column(String, nullable=False)
     content = Column(String)
-    category_id = Column(Integer, nullable=True)  # 복합 FK로 처리
+    category_id = Column(Integer,nullable=True)  # 복합 FK로 처리
     deadline = Column(TIMESTAMP)
     myjob = Column(Boolean, nullable=False, default=False)
     end_at = Column(TIMESTAMP)
@@ -31,5 +31,5 @@ class Work(Base):
     deleted_at = Column(TIMESTAMP)
 
     # 관계 설정
-    user = relationship("User", back_populates="works")
-    category = relationship("Category", back_populates="works")
+    user = relationship("User", back_populates="works", overlaps="works")
+    category = relationship("Category", back_populates="works", overlaps="user,works")

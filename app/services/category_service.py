@@ -36,6 +36,8 @@ class CategoryService:
         normal_path = self.normalize_path(path)
         return self.category_repo.find_id_by_path(normal_path, user_id)
 
+    def get_level0_category(self,user_id: int) -> Optional[list]:
+        return self.category_repo.find_category_by_level0(user_id)
 
 
     def normalize_path(self, path: str) -> str:

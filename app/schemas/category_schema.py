@@ -8,3 +8,4 @@ class CategoryCreate(BaseModel):
     name : str
     content : str
     end_at : Optional[datetime] = None
+    started_at : Optional[datetime] = None

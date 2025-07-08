@@ -14,3 +14,12 @@ def create_category(
     user_id = 1
     category_service = CategoryService(db)
     return category_service.create_category(category,user_id)
+
+@router.get("/level0")
+def get_category(
+    db: Session = Depends(get_db)
+):
+    user_id = 1
+    category_service = CategoryService(db)
+    return category_service.get_level0_category(user_id)
+    
