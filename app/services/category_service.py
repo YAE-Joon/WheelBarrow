@@ -14,6 +14,8 @@ class CategoryService:
         normalize_path = self.normalize_path(category.path)
         category_data = category.model_dump()
 
+        
+
         #user_id 추가
         category_data['user_id'] = user_id
 
@@ -39,6 +41,8 @@ class CategoryService:
     def get_level0_category(self,user_id: int) -> Optional[list]:
         return self.category_repo.find_category_by_level0(user_id)
 
+    def get_level1_category(self,user_id:int) -> Optional[list]:
+        return self.category_repo.find_category_by_level1_and_date(user_id)
 
     def normalize_path(self, path: str) -> str:
         """경로 정규화: 다양한 입력을 일관된 형태로 변환"""

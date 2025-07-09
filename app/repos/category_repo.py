@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import extract, and_ , or_
 from app.models.category import Category
+from datetime import timedelta,datetime
 from typing import List, Optional
 
 # Spring의 @Repository와 동일한 역할
@@ -24,17 +26,29 @@ class CategoryRepository:
             ).first()
         return result[0] if result else None
     
-    def find_category_by_level0(self, user_id:int) -> Optional[dict]:
-
-        result = self.db.query(Category.id,Category.name).filter(
+    def find_category_by_level0(self, user_id:int) -> list[Category]:
+        """연간사업이름 가져오기"""
+        return self.db.query(Category.id,Category.name).filter(
             Category.level ==0,
             Category.user_id == user_id
         ).all()
+    
+    def find_category_by_level1_and_date(self, user_id:int) -> list[Category]:
+        """일정 가져오기"""
+        now = datetime.now()
+        current_month_start = datetime(now.year,now.month, 1)
+        if now.month ==12:
+            next_month_start = datetime(now.year+1,1,1)
+        else:
+            next_month_start = datetime(now.year,now.month+1,1)
+        current_month_end = next_month_start - timedelta(days=1)
 
-        if not result:
-            return None
-        # 튜플 리스트를 딕셔너리로 변환
-        categories = {}
-        for row in result:
-            categories[row[0]] = row[1] #{id : name}
-        return categories
+        return self.db.query(Category.id,Category.parent_id,Category.name).filter(
+            Category.level ==1,
+            Category.user_id== user_id,
+            Category.started_at<= current_month_end,
+            or_(
+                Category.end_at.is_(None),
+                Category.end_at >= current_month_start
+            )
+        ).all()

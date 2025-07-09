@@ -9,3 +9,16 @@ class CategoryCreate(BaseModel):
     content : str
     end_at : Optional[datetime] = None
     started_at : Optional[datetime] = None
+
+class CategoryLevel0Response(BaseModel):
+    id : int
+    name : str
+    class Config:
+        from_attribute = True
+    
+class CategoryLevel1Response(BaseModel):
+    id : int
+    parent_id : int
+    name : str
+    class Config:
+        from_attribute = True
