@@ -43,7 +43,7 @@ class CategoryRepository:
             next_month_start = datetime(now.year,now.month+1,1)
         current_month_end = next_month_start - timedelta(days=1)
 
-        return self.db.query(Category.id,Category.parent_id,Category.name).filter(
+        return self.db.query(Category.id,Category.parent_id,Category.name,Category.started_at,Category.end_at).filter(
             Category.level ==1,
             Category.user_id== user_id,
             Category.started_at<= current_month_end,

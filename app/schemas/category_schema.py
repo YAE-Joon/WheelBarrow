@@ -20,5 +20,7 @@ class CategoryLevel1Response(BaseModel):
     id : int
     parent_id : int
     name : str
+    started_at : datetime
+    end_at : datetime
     class Config:
         from_attribute = True
