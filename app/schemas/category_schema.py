@@ -24,3 +24,11 @@ class CategoryLevel1Response(BaseModel):
     end_at : datetime
     class Config:
         from_attribute = True
+    
+class CategoryLevel1ByParentIdResponse(BaseModel):
+    id : int
+    name : str
+    class Config:
+        from_attribute = True
+    
+    

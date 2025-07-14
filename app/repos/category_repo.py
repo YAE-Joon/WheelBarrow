@@ -52,3 +52,8 @@ class CategoryRepository:
                 Category.end_at >= current_month_start
             )
         ).all()
+    
+    def find_category_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[Category]:
+        return self.db.query(Category.id,Category.name).filter(
+            Category.parent_id == parent_id
+        ).all()
