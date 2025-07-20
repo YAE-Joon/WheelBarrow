@@ -13,3 +13,11 @@ class WorkCreate(BaseModel):
 class WorkResponse(BaseModel):
     title : str
     id : int
+
+class TodayWorkResponse(BaseModel):
+    title : str
+    content : str
+    user_id : int
+    category_id : int
+    deadline : datetime
+    myjob : bool

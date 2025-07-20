@@ -12,3 +12,7 @@ class WorkService :
 
     def create_work(self, work:WorkCreate):
         return self.work_repo.create(work.model_dump())
+    
+    def get_today_works(self,user_id:int):
+        datetime = datetime.now()
+        return self.work_repo.today_works(user_id,datetime)
