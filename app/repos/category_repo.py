@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import extract, and_ , or_
+from sqlalchemy import extract, and_ , or_, text
 from app.models.category import Category
 from datetime import timedelta,datetime
 from typing import List, Optional
@@ -57,3 +57,22 @@ class CategoryRepository:
         return self.db.query(Category.id,Category.name).filter(
             Category.parent_id == parent_id
         ).all()
+    
+    def find_categories_all(self,user_id:int,category_id:int) -> list[Category]:
+        recursive_query = text("""
+        WITH RECURSIVE ancestors AS (
+            SELECT id, name, parent_id, level
+            FROM category
+            WHERE id = :category_id
+
+            UNION ALL
+
+            SELECT c.id, c.name, c.parent_id, c.level
+            FROM category c
+            JOIN ancestors a ON c.id = a.parent_id
+        )
+        SELECT * FROM ancestors;
+    """)
+        
+        result = self.db.execute(recursive_query,{"category_id": category_id})
+        return result.fetchall()

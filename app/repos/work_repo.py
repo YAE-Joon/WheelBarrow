@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.work import Work
 from datetime import timedelta,datetime
+from typing import List
 
 
 class WorkRepository:
@@ -14,14 +15,10 @@ class WorkRepository:
         self.db.refresh(db_work)
         return db_work
     
-    def today_works(self,user_id:int,datetime: datetime) -> Work:
-        result = self.db.query(
-            Work.title,
-            Work.content,
-            Work.category_id,
-            Work.deadline,
-            Work.myjob).filter(
+    def today_works(self,user_id:int,today:datetime) -> List[Work]:
+        result = self.db.query(Work).filter(
                 Work.user_id==user_id,
-                Work.created_at < datetime,
-                Work.end_at is NULL
+                Work.created_at < today,
+                Work.end_at.is_(None)
                 ).all()
+        return  result

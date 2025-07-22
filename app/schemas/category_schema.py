@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 
@@ -25,10 +25,16 @@ class CategoryLevel1Response(BaseModel):
     class Config:
         from_attribute = True
     
-class CategoryLevel1ByParentIdResponse(BaseModel):
+class CategoriesResponse(BaseModel):
     id : int
     name : str
+    level : Optional[int]
     class Config:
         from_attribute = True
-    
-    
+
+class CategoriesResponseWithParentId(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id : int
+    name : str
+    level : Optional[int]
+    parent_id : Optional[int] = None

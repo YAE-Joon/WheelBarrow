@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, ForeignKey, ForeignKeyConstraint, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.config.database import Base
+from enum import Enum
+from app.enums.work_status import WorkStatus
 
 # Spring의 @Entity와 동일한 역할
 class Work(Base):
@@ -27,6 +29,10 @@ class Work(Base):
     myjob = Column(Boolean, nullable=False, default=False)
     end_at = Column(TIMESTAMP)
     # Spring의 @CreationTimestamp와 유사
+    current_status = Column(
+        SQLEnum(WorkStatus)
+    )
+    started_at = Column(TIMESTAMP)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
     deleted_at = Column(TIMESTAMP)
 

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.repos.category_repo import CategoryRepository
 from datetime import datetime
-from app.schemas.category_schema import CategoryCreate
+from app.schemas.category_schema import CategoryCreate,CategoriesResponse,CategoriesResponseWithParentId
 from app.models.category import Category
 from typing import List, Optional
 
@@ -44,8 +44,13 @@ class CategoryService:
     def get_level1_category(self,user_id:int) -> Optional[list]:
         return self.category_repo.find_category_by_level1_and_date(user_id)
 
-    def get_level1_by_parent_id(self,user_id:int,parent_id:int) -> Optional[list]:
+    def get_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[CategoriesResponse]:
         return self.category_repo.find_category_level1_by_parent_id(user_id,parent_id)
+
+
+    def get_categoires_all_by_id(self,user_id:int,id:int) -> List[CategoriesResponseWithParentId]:
+        categories = self.category_repo.find_categories_all(user_id,id)
+        return [CategoriesResponseWithParentId.model_validate(category) for category in categories]
 
     def normalize_path(self, path: str) -> str:
         """경로 정규화: 다양한 입력을 일관된 형태로 변환"""

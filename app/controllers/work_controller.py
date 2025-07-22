@@ -16,7 +16,7 @@ def create_work(
     work.user_id = 1
     return service.create_work(work)
 
-@router.get("/today",response_model = TodayWorkResponse)
+@router.get("/today",response_model = List[TodayWorkResponse])
 def get_today_works(
     db : Session = Depends(get_db)
 ):
