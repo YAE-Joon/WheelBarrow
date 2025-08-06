@@ -22,3 +22,19 @@ class WorkRepository:
                 Work.end_at.is_(None)
                 ).all()
         return  result
+
+    def put_work(self,user_id:int,work_id:int,work_data : dict) -> Work:
+        db_work = self.db.query(Work).filter(
+            Work.user_id == user_id,
+            Work.id == work_id
+        ).first()
+        if not db_work:
+            return None
+
+        update_data = work_data.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_work, key, value)
+
+        self.db.commit()
+        self.db.refresh(db_work)
+        return db_work

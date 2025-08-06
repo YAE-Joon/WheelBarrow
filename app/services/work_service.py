@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.repos.work_repo import WorkRepository
 from datetime import datetime
-from app.schemas.work_schema import WorkCreate,TodayWorkResponse
+from app.schemas.work_schema import WorkCreate,TodayWorkResponse, WorkPut
 from app.models.category import Category
 from typing import List, Optional
 
@@ -17,3 +17,7 @@ class WorkService :
         today = datetime.now()
         works = self.work_repo.today_works(user_id,today)
         return [TodayWorkResponse.model_validate(work) for work in works]
+    
+    def put_today_work(self, user_id:int, work_id : int,work:WorkPut):
+        return self.work_repo.put_work(user_id,work_id,work)
+        

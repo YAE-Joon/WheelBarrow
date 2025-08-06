@@ -11,7 +11,17 @@ class WorkCreate(BaseModel):
     started_at : Optional[datetime]
     deadline : Optional[datetime]
     myjob : bool
-    
+
+class WorkPut(BaseModel):
+    title : str
+    content : Optional[str]
+    user_id : int
+    category_id : int
+    current_status : str
+    started_at : Optional[datetime]
+    deadline : Optional[datetime]
+    myjob : bool
+
 class WorkResponse(BaseModel):
     title : str
     id : int
