@@ -33,3 +33,12 @@ def put_today_work(
     service = WorkService(db)
     user_id = 1
     return service.put_today_work(user_id,work_id,work)
+
+@router.put("/work/end/{work_id}",response_model=TodayWorkResponse)
+def end_work(
+    work_id: int,
+    db : Session = Depends(get_db)
+):
+    service = WorkService(db)
+    user_id = 1
+    return service.end_work(user_id,work_id)

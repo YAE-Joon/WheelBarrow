@@ -38,3 +38,16 @@ class WorkRepository:
         self.db.commit()
         self.db.refresh(db_work)
         return db_work
+
+    def end_work(self,user_id:int,work_id:int)-> Work:
+        db_work = self.db.query(Work).filter(
+            Work.user_id == user_id,
+            Work.id == work_id
+        ).first()
+
+        if not db_work:
+            return None
+        db_work.current_status = 'DONE'
+        self.db.commit()
+        self.db.refresh(db_work)
+        return db_work

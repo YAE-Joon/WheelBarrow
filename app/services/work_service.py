@@ -21,3 +21,5 @@ class WorkService :
     def put_today_work(self, user_id:int, work_id : int,work:WorkPut):
         return self.work_repo.put_work(user_id,work_id,work)
         
+    def end_work(self, user_id:int, work_id:int):
+        return self.work_repo.end_work(user_id,work_id)
