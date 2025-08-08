@@ -27,7 +27,7 @@ class CategoryRepository:
         return result[0] if result else None
     
     def find_category_by_level0(self, user_id:int) -> list[Category]:
-        """연간사업이름 가져오기"""
+        """연간사업이름 가져오기"""                                                  
         return self.db.query(Category.id,Category.name).filter(
             Category.level ==0,
             Category.user_id == user_id

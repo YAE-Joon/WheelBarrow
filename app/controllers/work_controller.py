@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.config.database import get_db
-from app.schemas.work_schema import WorkCreate,WorkResponse,TodayWorkResponse,WorkPut
+from app.schemas.work_schema import *
 from app.services.work_service import WorkService
 from typing import List
 
@@ -42,3 +42,13 @@ def end_work(
     service = WorkService(db)
     user_id = 1
     return service.end_work(user_id,work_id)
+
+@router.get("/work/weekend",response_model = List[EndWorkResponse])
+def get_end_works(
+    start : datetime,
+    end : datetime,
+    db : Session = Depends(get_db)
+):
+    service = WorkService(db)
+    user_id = 1
+    return service.get_end_works(user_id,start,end)

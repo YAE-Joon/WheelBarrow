@@ -37,3 +37,21 @@ class TodayWorkResponse(BaseModel):
     started_at : Optional[datetime]
     deadline : Optional[datetime]
     myjob : bool
+
+class EndWorkResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id : int
+    title : str
+    content : Optional[str]
+    user_id : int
+    category_id : Optional[int]
+    category_path : Optional[str]
+    current_status : str
+    started_at : Optional[datetime]
+    end_at : datetime
+    deadline : Optional[datetime]
+    myjob : bool
+
+class DateRange(BaseModel):
+    start: datetime
+    end: datetime

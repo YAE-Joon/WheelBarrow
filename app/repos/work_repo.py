@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from app.models.work import Work
+from app.models.category import Category
 from datetime import timedelta,datetime
-from typing import List
+from typing import List,Tuple,Optional
 
 
 class WorkRepository:
@@ -39,7 +40,7 @@ class WorkRepository:
         self.db.refresh(db_work)
         return db_work
 
-    def end_work(self,user_id:int,work_id:int)-> Work:
+    def end_work(self,user_id:int,work_id:int,today:datetime)-> Work:
         db_work = self.db.query(Work).filter(
             Work.user_id == user_id,
             Work.id == work_id
@@ -48,6 +49,20 @@ class WorkRepository:
         if not db_work:
             return None
         db_work.current_status = 'DONE'
+        db_work.end_at = today
         self.db.commit()
         self.db.refresh(db_work)
         return db_work
+
+    def get_end_works(self,user_id:int,start:datetime,end:datetime) -> List[Tuple[Work, Optional[str]]]:
+        return self.db.query(
+            Work,
+            Category.path.label('category_path')
+        ).join(
+            Category, Work.category_id== Category.id
+        ).filter(
+            Work.user_id == user_id,
+            Work.end_at is not None,
+            Work.end_at.between(start,end)
+        ).all()
+

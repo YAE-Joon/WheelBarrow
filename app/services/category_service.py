@@ -46,8 +46,7 @@ class CategoryService:
 
     def get_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[CategoriesResponse]:
         return self.category_repo.find_category_level1_by_parent_id(user_id,parent_id)
-
-
+        
     def get_categoires_all_by_id(self,user_id:int,id:int) -> List[CategoriesResponseWithParentId]:
         categories = self.category_repo.find_categories_all(user_id,id)
         return [CategoriesResponseWithParentId.model_validate(category) for category in categories]
