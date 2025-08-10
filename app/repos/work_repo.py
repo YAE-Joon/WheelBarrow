@@ -16,13 +16,15 @@ class WorkRepository:
         self.db.refresh(db_work)
         return db_work
     
-    def today_works(self,user_id:int,today:datetime) -> List[Work]:
-        result = self.db.query(Work).filter(
+    def today_works(self,user_id:int,today:datetime) -> List[[Work]]:
+        works = self.db.query(
+            Work
+            ).filter(
                 Work.user_id==user_id,
                 Work.created_at < today,
                 Work.end_at.is_(None)
-                ).all()
-        return  result
+                ).all()        
+        return  works
 
     def put_work(self,user_id:int,work_id:int,work_data : dict) -> Work:
         db_work = self.db.query(Work).filter(

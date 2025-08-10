@@ -26,14 +26,14 @@ class CategoryRepository:
             ).first()
         return result[0] if result else None
     
-    def find_category_by_level0(self, user_id:int) -> list[Category]:
+    def find_category_by_level0(self, user_id:int) ->List[Category]:
         """연간사업이름 가져오기"""                                                  
         return self.db.query(Category.id,Category.name).filter(
             Category.level ==0,
             Category.user_id == user_id
         ).all()
     
-    def find_category_by_level1_and_date(self, user_id:int) -> list[Category]:
+    def find_category_by_level1_and_date(self, user_id:int) -> List[Category]:
         """일정 가져오기"""
         now = datetime.now()
         current_month_start = datetime(now.year,now.month, 1)
@@ -54,11 +54,11 @@ class CategoryRepository:
         ).all()
     
     def find_category_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[Category]:
-        return self.db.query(Category.id,Category.name).filter(
+        return self.db.query(Category.id,Category.name,Category.level).filter(
             Category.parent_id == parent_id
         ).all()
     
-    def find_categories_all(self,user_id:int,category_id:int) -> list[Category]:
+    def find_categories_all(self,user_id:int,category_id:int) -> List[Category]:
         recursive_query = text("""
         WITH RECURSIVE ancestors AS (
             SELECT id, name, parent_id, level
@@ -75,4 +75,4 @@ class CategoryRepository:
     """)
         
         result = self.db.execute(recursive_query,{"category_id": category_id})
-        return result.fetchall()
+        return result.mappings().fetchall()
