@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.config.database import Base
+from app.core.database import Base
 
 # Spring의 @Entity와 동일한 역할
 class User(Base):
@@ -13,7 +13,7 @@ class User(Base):
     # Spring의 @Column과 유사
     user_id = Column(String, unique=True, index=True)
     username = Column(String, index=True)
-    password = Column(String)
+    hashed_password = Column(String)
 
     # Spring의 @CreationTimestamp와 유사
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)

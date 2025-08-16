@@ -16,7 +16,7 @@ class WorkRepository:
         self.db.refresh(db_work)
         return db_work
     
-    def today_works(self,user_id:int,today:datetime) -> List[[Work]]:
+    def today_works(self,user_id:int,today:datetime) -> List[Work]:
         works = self.db.query(
             Work
             ).filter(

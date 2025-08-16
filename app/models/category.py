@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.config.database import Base
+from app.core.database import Base
 
 # Spring의 @Entity와 동일한 역할
 class Category(Base):

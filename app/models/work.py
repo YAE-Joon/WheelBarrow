@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, ForeignKey, ForeignKeyConstraint, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.config.database import Base
+from app.core.database import Base
 from enum import Enum
 from app.enums.work_status import WorkStatus
 

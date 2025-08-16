@@ -9,12 +9,11 @@ class UserRepository:
         self.db = db
 
     # Spring의 save() 메서드와 유사
-    def create(self, user_dict: dict) -> User:
-        db_user = User(**user_dict)
-        self.db.add(db_user)
+    def create(self, user_data: User) -> User:
+        self.db.add(user_data)
         self.db.commit()
-        self.db.refresh(db_user)
-        return db_user
+        self.db.refresh(user_data)
+        return user_data
     
     #Id로 User Id 가져오기
     def get_by_id(self, id_num:int) -> Optional[User]:

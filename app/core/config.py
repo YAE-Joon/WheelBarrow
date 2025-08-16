@@ -1,31 +1,24 @@
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 from typing import Optional
-import os
 
 class Settings(BaseSettings):
-    # 데이터베이스 설정
-    db_host:str
-    db_port:int
-    db_user:str
-    db_password:str
-    db_name:str
-    database_url:Optional[str] = None
+  # Spring의 application properties와 유사
+  #App
+  app_name : str = "Wheel Barrow"
+  debug: bool = False
+  #database url
+  database_url: str
 
-    #애플리케이션 설정
-    debug: bool
-    secret_key : str
+  #Security
+  secret_key: str
+  access_token_expire_minutes: int = 30
+  refresh_token_expire_days: int = 30
+  jwt_secret_key: str
+  jwt_algorithm: str
 
-    class Config:
-        env_file =".env"
-        case_sensitive = False
-        #.env 없으면 에러발생
-        env_file_encoding = 'utf-8'
+  class Config:
+    env_file = ".env"
+    extra = "ignore"
 
-    @property
-    def db_url(self) ->str:
-        """DATABASE_URL이 있으면 우선 사용, 없으면 개별 설정으로 구성"""
-        if self.database_url:
-            return self.database_url
-        return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
-#전역 인스턴스
 settings = Settings()
