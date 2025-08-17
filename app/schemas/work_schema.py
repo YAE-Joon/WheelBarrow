@@ -13,6 +13,7 @@ class WorkCreate(BaseModel):
     myjob : bool
 
 class WorkPut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     title : str
     content : Optional[str]
     user_id : int
@@ -23,6 +24,7 @@ class WorkPut(BaseModel):
     myjob : bool
 
 class WorkResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     title : str
     id : int
 

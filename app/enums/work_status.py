@@ -7,5 +7,6 @@ class WorkStatus(str,Enum):
     REJECTED = "반려"
     DONE = "완료"
     CANCELLED = "취소"
+    Delete = "삭제"
     
 

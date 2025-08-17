@@ -14,7 +14,7 @@ class CategoryLevel0Response(BaseModel):
     id : int
     name : str
     class Config:
-        from_attribute = True
+        from_attributes = True
     
 class CategoryLevel1Response(BaseModel):
     id : int
@@ -23,14 +23,25 @@ class CategoryLevel1Response(BaseModel):
     started_at : datetime
     end_at : datetime
     class Config:
-        from_attribute = True
+        from_attributes = True
+
+class CategoryResponse(BaseModel):
+    id : int
+    parent_id : Optional[int]
+    name : str
+    content : str
+    level : Optional[int]
+    started_at : Optional[datetime]
+    end_at : Optional[datetime]
+    class Config:
+        from_attributes = True
     
 class CategoriesResponse(BaseModel):
     id : int
     name : str
     level : Optional[int]
     class Config:
-        from_attribute = True
+        from_attributes = True
 
 class CategoriesResponseWithParentId(BaseModel):
     model_config = ConfigDict(from_attributes=True)

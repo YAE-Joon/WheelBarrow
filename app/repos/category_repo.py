@@ -1,15 +1,14 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import extract, and_ , or_, text
 from app.models.category import Category
 from datetime import timedelta,datetime
 from typing import List, Optional
 
+from app.repos.base_repo import BaseRepository
+
+
 # Spring의 @Repository와 동일한 역할
 # JpaRepository<User, Long>를 구현한 것과 유사
-class CategoryRepository:
-    def __init__(self,db:Session): # Spring의 EntityManager 주입과 유사
-        self.db = db
-
+class CategoryRepository(BaseRepository):
     # Spring의 save() 메서드와 유사
     def create(self, category_data :dict) -> Category:
         db_category = Category(**category_data)    
@@ -52,7 +51,16 @@ class CategoryRepository:
                 Category.end_at >= current_month_start
             )
         ).all()
-    
+
+    def get_categories_by_year(self, user_id:int,year_start:datetime,year_end:datetime) -> List[Category]:
+      return self.get_active_query(Category).filter(
+          Category.user_id==user_id,
+          or_(
+              Category.started_at <= year_end,
+              Category.end_at >= year_start
+          )
+      ).all()
+
     def find_category_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[Category]:
         return self.db.query(Category.id,Category.name,Category.level).filter(
             Category.parent_id == parent_id

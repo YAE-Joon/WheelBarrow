@@ -48,9 +48,10 @@ class WorkService :
         
         return [TodayWorkResponse.model_validate(work) for work in works]
     
-    def put_today_work(self, user_id:int, work_id : int,work:WorkPut):
-        return self.work_repo.put_work(user_id,work_id,work)
-        
+    def put_today_work(self, user_id:int, work_id : int,work_data:WorkPut) -> WorkPut:
+        result = self.work_repo.put_work(user_id,work_id,work_data)
+        return WorkPut.model_validate(result)
+
     def end_work(self, user_id:int, work_id:int):
         today = datetime.now()
         return self.work_repo.end_work(user_id,work_id,today)
@@ -81,3 +82,8 @@ class WorkService :
             response_list.append(response)
 
         return response_list
+
+    def delete_work(self, user_id:int, work_id:int) -> WorkResponse:
+      today = datetime.now()
+      work=self.work_repo.delete_by_work_id(user_id,work_id,today)
+      return WorkResponse.model_validate(work)

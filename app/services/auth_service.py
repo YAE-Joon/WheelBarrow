@@ -56,6 +56,7 @@ class AuthService:
         "refresh_token": refresh_token,
         "token_type": "bearer"
       }
+
     def get_user(self, user_id:str) -> Optional[User]:
         return self.user_repo.get_by_user_id(user_id)
         

@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
 from typing import List, Optional
+from app.repos.base_repo import BaseRepository
+
 
 # Spring의 @Repository와 동일한 역할
 # JpaRepository<User, Long>를 구현한 것과 유사
-class UserRepository:
-    def __init__(self,db:Session): # Spring의 EntityManager 주입과 유사
-        self.db = db
+class UserRepository(BaseRepository):
 
     # Spring의 save() 메서드와 유사
     def create(self, user_data: User) -> User:

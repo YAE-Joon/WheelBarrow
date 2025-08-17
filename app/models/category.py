@@ -21,6 +21,7 @@ class Category(Base):
     content = Column(String)
     parent_id = Column(Integer, ForeignKey("category.id"))
     end_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     started_at = Column(TIMESTAMP(timezone=True),nullable = True)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
 

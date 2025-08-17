@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from app.repos.category_repo import CategoryRepository
-from datetime import datetime
-from app.schemas.category_schema import CategoryCreate,CategoriesResponse,CategoriesResponseWithParentId
+from app.schemas.category_schema import *
 from app.models.category import Category
 from typing import List, Optional
 
@@ -43,6 +42,15 @@ class CategoryService:
 
     def get_level1_category(self,user_id:int) -> Optional[list]:
         return self.category_repo.find_category_by_level1_and_date(user_id)
+
+    def get_categories_by_year(self,user_id:int,year:int) -> List[CategoryResponse]:
+      year_start = datetime(year, 1, 1)
+      year_end = datetime(year, 12, 31, 23, 59, 59)
+      result = self.category_repo.get_categories_by_year(user_id, year_start,year_end)
+      category_list = []
+      for category in result:
+        category_list.append(CategoryResponse.model_validate(category))
+      return category_list
 
     def get_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[CategoriesResponse]:
         return self.category_repo.find_category_level1_by_parent_id(user_id,parent_id)
