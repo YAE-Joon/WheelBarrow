@@ -9,29 +9,13 @@ class CategoryService:
     def __init__(self, db:Session):
         self.category_repo = CategoryRepository(db)
 
-    def create_category(self, category :CategoryCreate,user_id: int) -> Category:
-        normalize_path = self.normalize_path(category.path)
-        category_data = category.model_dump()
-
-        
-
-        #user_id 추가
-        category_data['user_id'] = user_id
-
-        #parent_id를 조회 후 추가
-        parent_id = None
-        if normalize_path !="/" and '/' in normalize_path:
-            parent_path = normalize_path.rsplit('/',1)[0]
-            if parent_path =="":
-                parent_path ="/"
-            parent_id = self.get_id_by_path(parent_path, user_id)
-        
-        # 딕셔너리에 parent_id 추가
-        category_data['parent_id'] = parent_id
-        # 딕셔너리에 level 추가
-        level = self.calculate_level(normalize_path)
-        category_data['level'] = level
-        return self.category_repo.create(category_data)
+    def create_category(self, category :CategoryCreate,user_id: int) -> CategoryResponse:
+        category_with_user_id = category.model_dump()
+        category_with_user_id["user_id"] = user_id
+        category_create = Category(**category_with_user_id)
+        category_create.created_at = datetime.now()
+        result = self.category_repo.create(category_create)
+        return CategoryResponse.model_validate(result)
 
     def get_id_by_path(self,path: str, user_id: int) -> Optional[int]:
         normal_path = self.normalize_path(path)
@@ -59,6 +43,22 @@ class CategoryService:
         categories = self.category_repo.find_categories_all(user_id,id)
         return [CategoriesResponseWithParentId.model_validate(category) for category in categories]
 
+    def edit_category(self,id:int,category:CategoryEdit,user_id:int) -> CategoryResponse:
+        editing_category  =category.model_dump(exclude_unset=True)
+        editing_category['id'] = id
+        editing_category['user_id']= user_id
+        edited_category = self.category_repo.edit_category(editing_category)
+        return CategoryResponse.model_validate(edited_category)
+
+    def delete_category(self,id:int,user_id:int) -> CategoryResponse:
+        parent_category = self.category_repo.find_by_id(id)
+        parent_path = parent_category.path
+        child_categories = self.category_repo.find_categories_like_path(parent_path,user_id)
+        if len(child_categories)>1:
+            raise ValueError('하위 프로젝트가 존재합니다.')
+        else:
+            return self.category_repo.delete_category(id,user_id)
+
     def normalize_path(self, path: str) -> str:
         """경로 정규화: 다양한 입력을 일관된 형태로 변환"""
         # 앞뒤 공백 제거
@@ -67,16 +67,16 @@ class CategoryService:
         # 빈 문자열이나 "/"면 루트 반환
         if not path or path == "/":
             return "/"
-        
+
         # 앞뒤 슬래시 제거
         clean_path = path.strip('/')
 
         # 이중 슬래시 제거
         while '//' in clean_path:
             clean_path = clean_path.replace('//', '/')  # clean_path 자체를 업데이트
-        
+
         return f"/{clean_path}"
-    
+
     def calculate_level(self, normalize_path: str) -> int:
         #root 는 레벨이 없음.
         if normalize_path == "/":

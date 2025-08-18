@@ -66,3 +66,24 @@ def get_categories_all(
     user_id = user.id
     category_service = CategoryService(db)
     return category_service.get_categoires_all_by_id(user_id,id)
+
+@router.put("/category/{id}", response_model=CategoriesResponse)
+def update_category(
+    id : int,
+    category : CategoryEdit,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_id = user.id
+    category_service = CategoryService(db)
+    return category_service.edit_category(id,category,user_id)
+
+@router.put("/delete/{id}", response_model=CategoriesResponse)
+def delete_category(
+    id : int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_id = user.id
+    category_service = CategoryService(db)
+    return category_service.delete_category(id,user_id)

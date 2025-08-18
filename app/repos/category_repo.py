@@ -10,13 +10,20 @@ from app.repos.base_repo import BaseRepository
 # JpaRepository<User, Long>를 구현한 것과 유사
 class CategoryRepository(BaseRepository):
     # Spring의 save() 메서드와 유사
-    def create(self, category_data :dict) -> Category:
-        db_category = Category(**category_data)    
+    def create(self, db_category) -> Category:
         self.db.add(db_category)
+        self.db.flush()
+        category_id = db_category.id
+        db_category.path = f"{db_category.path}/{str(category_id)}"
         self.db.commit()
         self.db.refresh(db_category)
         return db_category
-    
+
+    def find_by_id(self,id:int) -> Optional[Category]:
+        return self.db.query(Category).filter(
+            Category.id==id
+        ).first()
+
     def find_id_by_path(self, path: str,user_id:int) -> Optional[int]:
         """경로로 카테고리 ID 조회"""
         result =  self.db.query(Category.id).filter(
@@ -24,14 +31,21 @@ class CategoryRepository(BaseRepository):
             Category.user_id == user_id
             ).first()
         return result[0] if result else None
-    
+
     def find_category_by_level0(self, user_id:int) ->List[Category]:
         """연간사업이름 가져오기"""                                                  
         return self.db.query(Category.id,Category.name).filter(
             Category.level ==0,
             Category.user_id == user_id
         ).all()
-    
+
+    def find_categories_like_path(self, path:str, user_id:int) -> List[Category]:
+
+      return self.db.query(Category).filter(
+          Category.path.like(f"{path}%"),
+          Category.user_id == user_id
+      ).all()
+
     def find_category_by_level1_and_date(self, user_id:int) -> List[Category]:
         """일정 가져오기"""
         now = datetime.now()
@@ -57,9 +71,43 @@ class CategoryRepository(BaseRepository):
           Category.user_id==user_id,
           or_(
               Category.started_at <= year_end,
-              Category.end_at >= year_start
+              Category.started_at.is_(None),
+          ),
+          or_(
+              Category.end_at >= year_start,
+              Category.end_at.is_(None),
           )
       ).all()
+
+    def edit_category(self, edit_category:dict) -> Category:
+      db_category = self.get_active_query(Category).filter(
+          Category.id == edit_category['id']
+      ).first()
+
+      if not db_category:
+        raise ValueError("project not found")
+
+
+      for key, value in edit_category.items():
+        if hasattr(db_category, key):
+          setattr(db_category, key, value)
+
+      self.db.commit()
+      self.db.refresh(db_category)
+      return db_category
+
+
+    def delete_category(self,id:int,user_id:int) -> Category:
+      db_category = self.get_active_query(Category).filter(
+          Category.id == id,
+          Category.user_id == user_id
+      ).first()
+      if not db_category:
+        raise ValueError("project not found")
+      db_category.deleted_at = datetime.now()
+      self.db.commit()
+      self.db.refresh(db_category)
+      return db_category
 
     def find_category_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[Category]:
         return self.db.query(Category.id,Category.name,Category.level).filter(
