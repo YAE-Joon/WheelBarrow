@@ -20,13 +20,13 @@ class CategoryRepository(BaseRepository):
         return db_category
 
     def find_by_id(self,id:int) -> Optional[Category]:
-        return self.db.query(Category).filter(
+        return self.get_active_query(Category).filter(
             Category.id==id
         ).first()
 
     def find_id_by_path(self, path: str,user_id:int) -> Optional[int]:
         """경로로 카테고리 ID 조회"""
-        result =  self.db.query(Category.id).filter(
+        result =  self.get_active_query(Category.id).filter(
             Category.path == path,
             Category.user_id == user_id
             ).first()
@@ -34,14 +34,14 @@ class CategoryRepository(BaseRepository):
 
     def find_category_by_level0(self, user_id:int) ->List[Category]:
         """연간사업이름 가져오기"""                                                  
-        return self.db.query(Category.id,Category.name).filter(
+        return self.get_active_query(Category).filter(
             Category.level ==0,
             Category.user_id == user_id
         ).all()
 
     def find_categories_like_path(self, path:str, user_id:int) -> List[Category]:
 
-      return self.db.query(Category).filter(
+      return self.get_active_query(Category).filter(
           Category.path.like(f"{path}%"),
           Category.user_id == user_id
       ).all()
@@ -56,7 +56,7 @@ class CategoryRepository(BaseRepository):
             next_month_start = datetime(now.year,now.month+1,1)
         current_month_end = next_month_start - timedelta(days=1)
 
-        return self.db.query(Category.id,Category.parent_id,Category.name,Category.started_at,Category.end_at).filter(
+        return self.get_active_query(Category.id,Category.parent_id,Category.name,Category.started_at,Category.end_at).filter(
             Category.level ==1,
             Category.user_id== user_id,
             Category.started_at<= current_month_end,
@@ -110,7 +110,7 @@ class CategoryRepository(BaseRepository):
       return db_category
 
     def find_category_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[Category]:
-        return self.db.query(Category.id,Category.name,Category.level).filter(
+        return self.get_active_query(Category.id,Category.name,Category.level).filter(
             Category.parent_id == parent_id
         ).all()
     
@@ -120,12 +120,14 @@ class CategoryRepository(BaseRepository):
             SELECT id, name, parent_id, level
             FROM category
             WHERE id = :category_id
-
+            AND deleted_at IS NULL
+            
             UNION ALL
 
             SELECT c.id, c.name, c.parent_id, c.level
             FROM category c
             JOIN ancestors a ON c.id = a.parent_id
+            WHERE c.deleted_at IS NULL
         )
         SELECT * FROM ancestors;
     """)
