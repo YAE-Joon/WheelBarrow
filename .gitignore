@@ -28,3 +28,15 @@ logs/
 # OS 관련
 .DS_Store
 Thumbs.db
+# Mac OS 파일들
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# macOS 리소스 포크 파일들
+**/.DS_Store
+**/._*
