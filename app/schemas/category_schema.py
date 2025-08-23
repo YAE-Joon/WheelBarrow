@@ -16,11 +16,11 @@ class CategoryCreate(BaseModel):
 
 
 class CategoryEdit(BaseModel):
-  name: Optional[str]
-  parent_id: Optional[int]
-  path: Optional[str]
-  level: Optional[int]
-  content: Optional[str]
+  name: Optional[str] = None
+  parent_id: Optional[int] = None
+  path: Optional[str] = None
+  level: Optional[int] = None
+  content: Optional[str] = None
   end_at: Optional[datetime] = None
   started_at: Optional[datetime] = None
 

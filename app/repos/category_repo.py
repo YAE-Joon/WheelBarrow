@@ -110,7 +110,7 @@ class CategoryRepository(BaseRepository):
       return db_category
 
     def find_category_level1_by_parent_id(self,user_id:int,parent_id:int) -> list[Category]:
-        return self.get_active_query(Category.id,Category.name,Category.level).filter(
+        return self.get_active_query(Category).filter(
             Category.parent_id == parent_id
         ).all()
     

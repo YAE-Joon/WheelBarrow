@@ -14,7 +14,9 @@ class WorkService :
 
     def create_work(self, work:WorkCreate):
         return self.work_repo.create(work.model_dump())
-    
+
+    def create_repeat(self, work:WorkCreate, day:int):
+        return self.work_repo.create_repeat(work.model_dump(), day)
     def get_today_works(self,user_id:int) -> List[TodayWorkResponse]:
         today = datetime.now()
         works = self.work_repo.today_works(user_id,today)
