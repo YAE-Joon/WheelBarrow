@@ -24,9 +24,7 @@ async def get_current_user(
   )
 
   try:
-    print(token)
     payload = decode_jwt(token)
-    print(f"payload = {payload}")
     if not payload:
       raise credentials_exception
     user_id = payload.get("sub")

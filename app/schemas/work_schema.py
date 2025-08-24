@@ -7,7 +7,6 @@ class WorkCreate(BaseModel):
     content : Optional[str]
     category_id : int
     user_id : int
-    category_name : str
     current_status : str
     started_at : Optional[datetime]
     deadline : Optional[datetime]

@@ -12,9 +12,9 @@ class WorkService :
         self.work_repo = WorkRepository(db)
         self.category_repo = CategoryRepository(db)
 
-    def create_work(self, work:WorkCreate):
-        return self.work_repo.create(work.model_dump())
-
+    def create_work(self, work:WorkCreate)->WorkResponse:
+        work_res = self.work_repo.create(work.model_dump())
+        return WorkResponse.model_validate(work_res)
     def create_repeat(self, work:WorkCreate, day:int):
         return self.work_repo.create_repeat(work.model_dump(), day)
     def get_today_works(self,user_id:int) -> List[TodayWorkResponse]:
