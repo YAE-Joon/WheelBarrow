@@ -50,9 +50,9 @@ class WorkService :
         
         return [TodayWorkResponse.model_validate(work) for work in works]
     
-    def put_today_work(self, user_id:int, work_id : int,work_data:WorkPut) -> WorkPut:
+    def put_today_work(self, user_id:int, work_id : int,work_data:WorkPut) -> WorkEdit:
         result = self.work_repo.put_work(user_id,work_id,work_data)
-        return WorkPut.model_validate(result)
+        return WorkEdit.model_validate(result)
 
     def end_work(self, user_id:int, work_id:int):
         today = datetime.now()

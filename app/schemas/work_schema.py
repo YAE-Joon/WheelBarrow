@@ -5,7 +5,6 @@ from typing import Optional,List
 class WorkCreate(BaseModel):
     title : str
     content : Optional[str]
-    user_id : int
     category_id : int
     current_status : str
     started_at : Optional[datetime]
@@ -16,7 +15,6 @@ class WorkPut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title : str
     content : Optional[str]
-    user_id : int
     category_id : int
     current_status : str
     started_at : Optional[datetime]
@@ -38,7 +36,6 @@ class WorkEdit(BaseModel):
     id : int
     title : str
     content : Optional[str]
-    user_id : int
     category_id : Optional[int]
     current_status : str
     started_at : Optional[datetime]
@@ -50,7 +47,6 @@ class TodayWorkResponse(BaseModel):
     id : int
     title : str
     content : Optional[str]
-    user_id : int
     categories : Optional[List[CategoryResponse]]
     current_status : str
     started_at : Optional[datetime]
@@ -62,7 +58,6 @@ class EndWorkResponse(BaseModel):
     id : int
     title : str
     content : Optional[str]
-    user_id : int
     category_id : Optional[int]
     category_path : Optional[str]
     current_status : str
