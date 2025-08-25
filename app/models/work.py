@@ -24,6 +24,7 @@ class Work(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     title = Column(String, nullable=False)
     content = Column(String)
+    recurring_work_id = Column(Integer, ForeignKey("recurring_work.id"),nullable=True)
     category_id = Column(Integer,nullable=True)  # 복합 FK로 처리
     deadline = Column(TIMESTAMP)
     myjob = Column(Boolean, nullable=False, default=False)
@@ -39,3 +40,4 @@ class Work(Base):
     # 관계 설정
     user = relationship("User", back_populates="works", overlaps="works")
     category = relationship("Category", back_populates="works", overlaps="user,works")
+    recurring_work = relationship("RecurringWork", back_populates="generated_works")

@@ -1,0 +1,60 @@
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
+from typing import Optional, Dict, Any, List
+from enum import Enum
+
+
+class RecurrenceType(str, Enum):
+  DAILY = "daily"
+  WEEKLY = "weekly"
+  MONTHLY = "monthly"
+  YEARLY = "yearly"
+  CUSTOM = "custom"
+
+
+class RecurringWorkCreate(BaseModel):
+  title: str
+  content: Optional[str] = None
+  category_id: Optional[int] = None
+  myjob: bool = False
+
+  recurrence_type: RecurrenceType
+  interval_value: int = 1
+  started_at: datetime
+  end_at: Optional[datetime] = None
+  recurrence_config: Optional[Dict[str, Any]] = None
+
+
+class RecurringWorkResponse(BaseModel):
+  model_config = ConfigDict(from_attributes=True)
+
+  id: int
+  user_id: int
+  title: str
+  content: Optional[str]
+  category_id: Optional[int]
+  myjob: bool
+
+  recurrence_type: RecurrenceType
+  interval_value: int
+  started_at: datetime
+  end_at: Optional[datetime]
+  recurrence_config: Optional[Dict[str, Any]]
+  next_execution_date: datetime
+  is_active: bool
+
+  created_at: datetime
+
+
+class RecurringWorkUpdate(BaseModel):
+  title: Optional[str] = None
+  content: Optional[str] = None
+  category_id: Optional[int] = None
+  myjob: Optional[bool] = None
+
+  recurrence_type: Optional[RecurrenceType] = None
+  interval_value: Optional[int] = None
+  start_date: Optional[datetime] = None
+  end_date: Optional[datetime] = None
+  recurrence_config: Optional[Dict[str, Any]] = None
+  is_active: Optional[bool] = None

@@ -21,3 +21,4 @@ class User(Base):
     # 관계 설정 - 문자열로 참조해서 순환 import 방지
     works = relationship("Work",back_populates="user")
     categories = relationship("Category", back_populates="user")
+    recurring_works = relationship("RecurringWork", back_populates="user")
