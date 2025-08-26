@@ -20,7 +20,8 @@ class RecurringWork(Base):
   interval_value = Column(Integer, default=1)
   started_at = Column(TIMESTAMP)
   created_at = Column(TIMESTAMP(timezone=True), server_default=func.now(),nullable=False)
-  end_at = Column(TIMESTAMP(timezone=True), nullable=False)
+  deadline = Column(TIMESTAMP(timezone=True))
+  end_at = Column(TIMESTAMP(timezone=True))
 
   #추가설정
   recurrence_config= Column(JSON,nullable =True)

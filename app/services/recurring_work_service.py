@@ -9,7 +9,11 @@ from app.enums.work_status import WorkStatus
 from app.repos.recurring_work_repo import RecurringWorkRepository
 from app.repos.work_repo import WorkRepository
 from app.schemas.recurring_work_schema import *
+from app.enums.work_status import WorkStatus
 import calendar
+
+from app.schemas.work_schema import WorkCreate
+
 
 class RecurringWorkService:
   def __init__(self, db: Session):
@@ -21,6 +25,16 @@ class RecurringWorkService:
     data['user_id'] = user_id
     data['next_execution_date'] = data['started_at']
 
+    create_work = dict(
+        title = data['title'],
+        content = data['content'],
+        category_id = data['category_id'],
+        current_status=WorkStatus.TODO,
+        started_at = data['started_at'],
+        deadline = data['deadline'],
+        myjob = data['myjob']
+    )
+    self.work_repo.create(create_work)
     recurring_work = self.recurring_work_repo.create(data)
     return RecurringWorkResponse.model_validate(recurring_work)
 
@@ -47,12 +61,16 @@ class RecurringWorkService:
 
     for recurring_work in pending_works:
       # 종료 날짜 확인
-      if recurring_work.end_date and current_time > recurring_work.end_date:
+      if recurring_work.end_at and current_time > recurring_work.end_at:
         # 반복 작업 비활성화
         self.recurring_work_repo.update(recurring_work.id,
                                         recurring_work.user_id,
                                         {"is_active": False})
         continue
+
+      next_start_date = self._calculate_next_start_and_deadline_date(recurring_work.recurrence_type,recurring_work.interval_value,recurring_work.started_at)
+      next_deadline = self._calculate_next_start_and_deadline_date(recurring_work.recurrence_type,recurring_work.interval_value,recurring_work.deadline)
+
 
       # 새로운 Work 생성
       work_data = {
@@ -60,10 +78,11 @@ class RecurringWorkService:
         "content": recurring_work.content,
         "user_id": recurring_work.user_id,
         "category_id": recurring_work.category_id,
+        "deadline": next_deadline,
         "myjob": recurring_work.myjob,
         "current_status": WorkStatus.TODO,
         "recurring_work_id": recurring_work.id,
-        "started_at": current_time
+        "started_at": next_start_date
       }
 
       self.work_repo.create(work_data)
@@ -72,7 +91,7 @@ class RecurringWorkService:
       next_date = self._calculate_next_execution_date(recurring_work)
       if next_date:
         self.recurring_work_repo.update_next_execution_date(recurring_work.id,
-                                                            next_date)
+                                                            next_date,next_start_date,next_deadline)
 
   def _calculate_next_execution_date(self, recurring_work: RecurringWork) -> \
   Optional[datetime]:
@@ -95,6 +114,23 @@ class RecurringWorkService:
     elif recurring_work.recurrence_type == RecurrenceType.CUSTOM:
       # 사용자 정의 로직 (recurrence_config 활용)
       return self._calculate_custom_next_date(recurring_work)
+
+    return None
+
+  def _calculate_next_start_and_deadline_date(self, recurrence_type : RecurrenceType, interval_value:int,date : datetime) -> Optional[datetime]:
+    input_date = date
+    if recurrence_type == RecurrenceType.DAILY:
+      return input_date + timedelta(days=interval_value)
+
+    elif recurrence_type == RecurrenceType.WEEKLY:
+      return input_date + timedelta(weeks=interval_value)
+
+    elif recurrence_type == RecurrenceType.MONTHLY:
+      return input_date + relativedelta(
+        months=interval_value)
+
+    elif recurrence_type == RecurrenceType.YEARLY:
+      return input_date + relativedelta(years=interval_value)
 
     return None
 

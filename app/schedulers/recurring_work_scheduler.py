@@ -25,7 +25,7 @@ def start_recurring_work_scheduler():
   scheduler = BackgroundScheduler()
 
   # 매 시간마다 실행 (실제로는 더 자주 실행하거나 cron 형태로 설정 가능)
-  trigger = IntervalTrigger(hours=1)
+  trigger = IntervalTrigger(hours=12)
   scheduler.add_job(execute_recurring_works, trigger, id='recurring_works')
 
   scheduler.start()

@@ -21,6 +21,7 @@ class RecurringWorkCreate(BaseModel):
   recurrence_type: RecurrenceType
   interval_value: int = 1
   started_at: datetime
+  deadline: Optional[datetime]
   end_at: Optional[datetime] = None
   recurrence_config: Optional[Dict[str, Any]] = None
 
@@ -54,7 +55,7 @@ class RecurringWorkUpdate(BaseModel):
 
   recurrence_type: Optional[RecurrenceType] = None
   interval_value: Optional[int] = None
-  start_date: Optional[datetime] = None
-  end_date: Optional[datetime] = None
+  started_at: Optional[datetime] = None
+  end_at: Optional[datetime] = None
   recurrence_config: Optional[Dict[str, Any]] = None
   is_active: Optional[bool] = None

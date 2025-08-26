@@ -21,13 +21,15 @@ class RecurringWorkRepository(BaseRepository):
         RecurringWork.next_execution_date<= current_time
       ).all()
 
-  def update_next_execution_date(self, recurring_work_id : int , next_date : datetime):
+  def update_next_execution_date(self, recurring_work_id : int , next_date : datetime , next_start_date : datetime , next_deadline : datetime) -> datetime:
     recurring_work = self.get_active_query(RecurringWork).filter(
         RecurringWork.id == recurring_work_id,
     ).first()
 
     if recurring_work:
       recurring_work.next_execution_date = next_date
+      recurring_work.started_at = next_start_date
+      recurring_work.deadline = next_deadline
       self.db.commit()
       self.db.refresh(recurring_work)
 
