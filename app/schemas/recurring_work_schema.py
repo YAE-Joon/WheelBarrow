@@ -17,7 +17,7 @@ class RecurringWorkCreate(BaseModel):
   content: Optional[str] = None
   category_id: Optional[int] = None
   myjob: bool = False
-
+  user_id: Optional[int] = None
   recurrence_type: RecurrenceType
   interval_value: int = 1
   started_at: datetime

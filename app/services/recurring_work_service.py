@@ -20,12 +20,12 @@ class RecurringWorkService:
     self.recurring_work_repo = RecurringWorkRepository(db)
     self.work_repo = WorkRepository(db)
 
-  def create_recurring_work(self, recurring_work_data: RecurringWorkCreate, user_id:int,) -> RecurringWorkResponse:
+  def create_recurring_work(self, recurring_work_data: RecurringWorkCreate) -> RecurringWorkResponse:
     data = recurring_work_data.model_dump()
-    data['user_id'] = user_id
     data['next_execution_date'] = data['started_at']
 
     create_work = dict(
+        user_id = data['user_id'],
         title = data['title'],
         content = data['content'],
         category_id = data['category_id'],

@@ -17,7 +17,8 @@ def create_recurring_work(
     db: Session = Depends(get_db)
 ):
   service = RecurringWorkService(db)
-  return service.create_recurring_work(recurring_work, user.id)
+  recurring_work.user_id = user.id
+  return service.create_recurring_work(recurring_work)
 
 
 @router.get("/", response_model=List[RecurringWorkResponse])
