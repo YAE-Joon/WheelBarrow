@@ -23,7 +23,7 @@ class RecurringWorkService:
   def create_recurring_work(self, recurring_work_data: RecurringWorkCreate) -> RecurringWorkResponse:
     data = recurring_work_data.model_dump()
     data['next_execution_date'] = data['started_at']
-
+    recurring_work = self.recurring_work_repo.create(data)
     create_work = dict(
         user_id = data['user_id'],
         title = data['title'],
@@ -32,15 +32,23 @@ class RecurringWorkService:
         current_status=WorkStatus.TODO,
         started_at = data['started_at'],
         deadline = data['deadline'],
-        myjob = data['myjob']
+        myjob = data['myjob'],
+        recurring_work_id = recurring_work.id
     )
     self.work_repo.create(create_work)
-    recurring_work = self.recurring_work_repo.create(data)
     return RecurringWorkResponse.model_validate(recurring_work)
 
   def get_user_recurring_works(self, user_id:int) -> List[RecurringWorkResponse]:
     recurring_works = self.recurring_work_repo.get_by_user_id(user_id)
     return [RecurringWorkResponse.model_validate(rw) for rw in recurring_works]
+
+  def get_user_recurring_works_list_by_user_id(self, user_id:int) -> List[RecurringWorkIdListResponse]:
+    recurring_works = self.recurring_work_repo.get_by_user_id(user_id)
+    recurring_works_list = []
+    for rw in recurring_works:
+      if rw.is_active:
+        recurring_works_list.append(RecurringWorkIdListResponse.model_validate(rw))
+    return recurring_works_list
 
   def update_recurring_work(self, recurring_work_id: int, user_id: int,
       update_data: RecurringWorkUpdate) -> RecurringWorkResponse:

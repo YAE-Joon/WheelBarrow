@@ -29,6 +29,14 @@ def get_recurring_works(
   service = RecurringWorkService(db)
   return service.get_user_recurring_works(user.id)
 
+@router.get("/list", response_model=List[RecurringWorkIdListResponse])
+def get_recurring_works_list(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+  service = RecurringWorkService(db)
+  user_id = user.id
+  return service.get_user_recurring_works_list_by_user_id(user_id)
 
 @router.put("/{recurring_work_id}", response_model=RecurringWorkResponse)
 def update_recurring_work(

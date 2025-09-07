@@ -15,8 +15,7 @@ class WorkService :
     def create_work(self, work:WorkCreate)->WorkResponse:
         work_res = self.work_repo.create(work.model_dump())
         return WorkResponse.model_validate(work_res)
-    def create_repeat(self, work:WorkCreate, day:int):
-        return self.work_repo.create_repeat(work.model_dump(), day)
+
     def get_today_works(self,user_id:int) -> List[TodayWorkResponse]:
         today = datetime.now()
         works = self.work_repo.today_works(user_id,today)
@@ -34,12 +33,13 @@ class WorkService :
                 id = work.id,
                 title = work.title,
                 content = work.content,
-                user_id = user_id,
                 categories = category_list,
                 current_status = work.current_status,
                 started_at = work.started_at,
                 deadline = work.deadline,
-                myjob = work.myjob
+                myjob = work.myjob,
+                recurrence_type= work.recurring_work.recurrence_type if work.recurring_work else None,
+                interval_value= work.recurring_work.interval_value if work.recurring_work else None,
             )
 
             worklist.append(result)

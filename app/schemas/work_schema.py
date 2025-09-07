@@ -2,6 +2,9 @@ from pydantic import BaseModel,ConfigDict
 from datetime import datetime
 from typing import Optional,List
 
+from app.enums.recurrenceType import RecurrenceType
+
+
 class WorkCreate(BaseModel):
     title : str
     content : Optional[str]
@@ -53,7 +56,8 @@ class TodayWorkResponse(BaseModel):
     started_at : Optional[datetime]
     deadline : Optional[datetime]
     myjob : bool
-
+    recurrence_type : Optional[RecurrenceType]
+    interval_value : Optional[int]
 class EndWorkResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id : int

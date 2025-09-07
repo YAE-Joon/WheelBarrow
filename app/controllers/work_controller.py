@@ -20,17 +20,6 @@ def create_work(
     print("work: ",work.user_id,type(work.user_id))
     return service.create_work(work)
 
-@router.post("/repeat",response_model=WorkResponse)
-def create_repeat(
-    work: WorkCreate,
-    day : int,
-    user: User = Depends(get_current_user),
-    db : Session = Depends(get_db)
-):
-  service = WorkService(db)
-  work.user_id = user.id
-  return service.create_repeat(work, day)
-
 @router.get("/today",response_model = List[TodayWorkResponse])
 def get_today_works(
     user: User = Depends(get_current_user),
