@@ -29,18 +29,32 @@ class WorkService :
             for category in categories_linked_work:
                 category_in_work =CategoryResponse(category_id = category.id, category_name = category.name, level = category.level)
                 category_list.append(category_in_work)
-            result = TodayWorkResponse(
-                id = work.id,
-                title = work.title,
-                content = work.content,
-                categories = category_list,
-                current_status = work.current_status,
-                started_at = work.started_at,
-                deadline = work.deadline,
-                myjob = work.myjob,
-                recurrence_type= work.recurring_work.recurrence_type if work.recurring_work else None,
-                interval_value= work.recurring_work.interval_value if work.recurring_work else None,
-            )
+
+            if work.recurring_work and work.recurring_work.is_active:
+                result = TodayWorkResponse(
+                  id = work.id,
+                  title = work.title,
+                  content = work.content,
+                  categories = category_list,
+                  current_status = work.current_status,
+                  started_at = work.started_at,
+                  deadline = work.deadline,
+                  myjob = work.myjob,
+                  recurrence_type= work.recurring_work.recurrence_type if work.recurring_work else None,
+                  interval_value= work.recurring_work.interval_value if work.recurring_work else None,
+                  is_active = work.recurring_work.is_active if work.recurring_work else None
+              )
+            else:
+                result = TodayWorkResponse(
+                  id = work.id,
+                  title=work.title,
+                  content=work.content,
+                  categories=category_list,
+                  current_status=work.current_status,
+                  started_at=work.started_at,
+                  deadline=work.deadline,
+                  myjob=work.myjob,
+                )
 
             worklist.append(result)
 

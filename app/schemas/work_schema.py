@@ -56,8 +56,9 @@ class TodayWorkResponse(BaseModel):
     started_at : Optional[datetime]
     deadline : Optional[datetime]
     myjob : bool
-    recurrence_type : Optional[RecurrenceType]
-    interval_value : Optional[int]
+    recurrence_type : Optional[RecurrenceType] = None
+    interval_value : Optional[int] = None
+    is_active : Optional[bool] = None
 class EndWorkResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id : int
