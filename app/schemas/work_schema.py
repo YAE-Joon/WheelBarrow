@@ -56,6 +56,7 @@ class TodayWorkResponse(BaseModel):
     started_at : Optional[datetime]
     deadline : Optional[datetime]
     myjob : bool
+    recurrence_id : Optional[int] = None
     recurrence_type : Optional[RecurrenceType] = None
     interval_value : Optional[int] = None
     is_active : Optional[bool] = None

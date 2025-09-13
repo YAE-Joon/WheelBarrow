@@ -1,5 +1,8 @@
-from sqlalchemy.orm import joinedload
 
+from sqlalchemy import and_
+from sqlalchemy.orm import contains_eager
+
+from app.models import RecurringWork
 from app.models.work import Work
 from app.models.category import Category
 from datetime import timedelta,datetime
@@ -18,16 +21,19 @@ class WorkRepository(BaseRepository):
     def today_works(self, user_id: int, today: datetime) -> List[Work]:
       works = (self.get_active_query(
           Work,
-      ).options(
-          joinedload(Work.recurring_work)  # RecurringWork 데이터 함께 로드
       ).outerjoin(
-          Work.recurring_work
+          RecurringWork,
+          and_(
+          Work.recurring_work_id == RecurringWork.id,
+          RecurringWork.deleted_at.is_(None)
+          )
+      ).options(
+          contains_eager(Work.recurring_work)
       ).filter(
           Work.user_id == user_id,
           Work.created_at < today,
           Work.end_at.is_(None)
       ).all())
-
       return works
 
     def put_work(self,user_id:int,work_id:int,work_data : dict) -> Work:

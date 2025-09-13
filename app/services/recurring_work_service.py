@@ -22,7 +22,12 @@ class RecurringWorkService:
 
   def create_recurring_work(self, recurring_work_data: RecurringWorkCreate) -> RecurringWorkResponse:
     data = recurring_work_data.model_dump()
-    data['next_execution_date'] = data['started_at']
+    create_work_start = data['started_at']
+    create_work_deadline = data['deadline']
+    next_started_at = self._calculate_next_start_and_deadline_date(recurring_work_data.recurrence_type,recurring_work_data.interval_value, create_work_start)
+    data['next_execution_date'] = next_started_at-timedelta(days=1)
+    data['started_at'] = next_started_at
+    data['deadline'] = self._calculate_next_start_and_deadline_date(recurring_work_data.recurrence_type,recurring_work_data.interval_value, create_work_deadline)
     recurring_work = self.recurring_work_repo.create(data)
     create_work = dict(
         user_id = data['user_id'],
@@ -30,8 +35,8 @@ class RecurringWorkService:
         content = data['content'],
         category_id = data['category_id'],
         current_status=WorkStatus.TODO,
-        started_at = data['started_at'],
-        deadline = data['deadline'],
+        started_at = create_work_start,
+        deadline = create_work_deadline,
         myjob = data['myjob'],
         recurring_work_id = recurring_work.id
     )
@@ -57,9 +62,13 @@ class RecurringWorkService:
                                                      user_id, data)
     return RecurringWorkResponse.model_validate(recurring_work)
 
-  def delete_recurring_work(self, recurring_work_id: int, user_id: int) -> RecurringWorkResponse:
-      recurring_work = self.recurring_work_repo.delete(recurring_work_id, user_id)
-      return RecurringWorkResponse.model_validate(recurring_work)
+  def delete_recurring_work(self, recurring_work_id: int, user_id: int):
+    self.recurring_work_repo.delete(recurring_work_id, user_id)
+    return None
+
+  def get_recurring_work_by_id(self, recurring_work_id: int, user_id: int) -> RecurringWorkResponse:
+    recurring_work = self.recurring_work_repo.get_by_recurring_work_id(recurring_work_id, user_id)
+    return RecurringWorkResponse.model_validate(recurring_work)
 
   def execute_pending_recurring_works(self):
     """스케줄러에서 호출되는 메서드 - 실행 예정인 반복 작업들을 처리"""

@@ -40,6 +40,7 @@ class WorkService :
                   started_at = work.started_at,
                   deadline = work.deadline,
                   myjob = work.myjob,
+                  recurrence_id=work.recurring_work.id if work.recurring_work else None,
                   recurrence_type= work.recurring_work.recurrence_type if work.recurring_work else None,
                   interval_value= work.recurring_work.interval_value if work.recurring_work else None,
                   is_active = work.recurring_work.is_active if work.recurring_work else None

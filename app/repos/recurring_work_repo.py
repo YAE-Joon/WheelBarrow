@@ -51,16 +51,25 @@ class RecurringWorkRepository(BaseRepository):
     self.db.refresh(recurrent_work)
     return recurrent_work
 
-  def delete(self, recurrent_work_id : int, user_id: int) -> Optional[RecurringWork]:
-    recurring_work = self.get_active_query(RecurringWork).filter(
-        RecurringWork.id == recurrent_work_id,
+  def get_by_recurring_work_id(self, recurring_work_id: int, user_id: int) -> Optional[RecurringWork]:
+    recurrent_work = self.get_active_query(RecurringWork).filter(
+        RecurringWork.id == recurring_work_id,
         RecurringWork.user_id == user_id
     ).first()
-
-    if not recurring_work:
+    if not recurrent_work:
       raise ValueError('Recurring work not found')
-    recurring_work.delete_at = datetime.now()
-    recurring_work.is_active = False
+    return recurrent_work
+
+  def delete(self, recurrent_work_id: int,user_id: int) -> None:
+    today = datetime.today()
+    recurrent_work = self.get_active_query(RecurringWork).filter(
+        RecurringWork.id == recurrent_work_id,
+        RecurringWork.user_id == user_id,
+        RecurringWork.deleted_at.is_(None)
+    ).first()
+    if not recurrent_work:
+      raise ValueError('Recurring work not found')
+    recurrent_work.deleted_at = today
     self.db.commit()
-    self.db.refresh(recurring_work)
-    return recurring_work
+    # self.db.refresh(recurrent_work)
+    return None

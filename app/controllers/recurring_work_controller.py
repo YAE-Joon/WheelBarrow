@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.models.user import User
-from app.services.recurring_work_service import RecurringWorkService
 from app.schemas.recurring_work_schema import *
 from typing import List
 
@@ -20,6 +19,15 @@ def create_recurring_work(
   recurring_work.user_id = user.id
   return service.create_recurring_work(recurring_work)
 
+@router.post("/", response_model=RecurringWorkResponse)
+def create_recurring_work_without_work(
+    recurring_work: RecurringWorkCreate,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+  service = RecurringWorkService(db)
+  recurring_work.user_id = user.id
+  return service.create_recurring_work(recurring_work)
 
 @router.get("/", response_model=List[RecurringWorkResponse])
 def get_recurring_works(
@@ -38,6 +46,16 @@ def get_recurring_works_list(
   user_id = user.id
   return service.get_user_recurring_works_list_by_user_id(user_id)
 
+@router.get("/{id}", response_model=RecurringWorkResponse)
+def get_recurring_work(
+    id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+  service = RecurringWorkService(db)
+  user_id = user.id
+  return service.get_recurring_work_by_id(id, user_id)
+
 @router.put("/{recurring_work_id}", response_model=RecurringWorkResponse)
 def update_recurring_work(
     recurring_work_id: int,
@@ -52,8 +70,7 @@ def update_recurring_work(
   except ValueError as e:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-
-@router.delete("/{recurring_work_id}", response_model=RecurringWorkResponse)
+@router.put("/delete/{recurring_work_id}", response_model=None)
 def delete_recurring_work(
     recurring_work_id: int,
     user: User = Depends(get_current_user),
@@ -64,7 +81,6 @@ def delete_recurring_work(
     return service.delete_recurring_work(recurring_work_id, user.id)
   except ValueError as e:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-
 
 # app/schedulers/recurring_work_scheduler.py
 from apscheduler.schedulers.background import BackgroundScheduler

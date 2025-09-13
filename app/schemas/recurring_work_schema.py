@@ -29,22 +29,18 @@ class RecurringWorkCreate(BaseModel):
 class RecurringWorkResponse(BaseModel):
   model_config = ConfigDict(from_attributes=True)
 
-  id: int
-  user_id: int
   title: str
   content: Optional[str]
   category_id: Optional[int]
   myjob: bool
-
+  id: int
   recurrence_type: RecurrenceType
   interval_value: int
   started_at: datetime
+  deadline: Optional[datetime]
   end_at: Optional[datetime]
-  recurrence_config: Optional[Dict[str, Any]]
   next_execution_date: datetime
   is_active: bool
-
-  created_at: datetime
 
 class RecurringWorkIdListResponse(BaseModel):
   model_config = ConfigDict(from_attributes=True)
