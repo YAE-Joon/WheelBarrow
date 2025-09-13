@@ -25,6 +25,23 @@ class RecurringWorkCreate(BaseModel):
   end_at: Optional[datetime] = None
   recurrence_config: Optional[Dict[str, Any]] = None
 
+class RecurringWorkCreateWithoutWork(BaseModel):
+  work_id: int
+  title: str
+  content: Optional[str] = None
+  category_id: Optional[int] = None
+  title: str
+  content: Optional[str] = None
+  category_id: Optional[int] = None
+  myjob: bool = False
+  current_status: str
+  user_id: Optional[int] = None
+  recurrence_type: RecurrenceType
+  interval_value: int = 1
+  started_at: datetime
+  deadline: Optional[datetime]
+  end_at: Optional[datetime] = None
+  recurrence_config: Optional[Dict[str, Any]] = None
 
 class RecurringWorkResponse(BaseModel):
   model_config = ConfigDict(from_attributes=True)
@@ -57,7 +74,7 @@ class RecurringWorkUpdate(BaseModel):
   content: Optional[str] = None
   category_id: Optional[int] = None
   myjob: Optional[bool] = None
-
+  deadline: Optional[datetime] = None
   recurrence_type: Optional[RecurrenceType] = None
   interval_value: Optional[int] = None
   started_at: Optional[datetime] = None

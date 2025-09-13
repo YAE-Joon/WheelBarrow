@@ -46,6 +46,17 @@ class WorkEdit(BaseModel):
     deadline : Optional[datetime]
     myjob : bool
 
+class WorkEditWithRecurringWork(BaseModel):
+  model_config = ConfigDict(from_attributes=True)
+  title: str
+  content: Optional[str]
+  category_id: Optional[int]
+  current_status: str
+  started_at: Optional[datetime]
+  deadline: Optional[datetime]
+  myjob: bool
+  recurring_work_id: Optional[int]
+
 class TodayWorkResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id : int

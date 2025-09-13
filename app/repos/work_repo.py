@@ -8,6 +8,8 @@ from app.models.category import Category
 from datetime import timedelta,datetime
 from typing import List,Tuple,Optional
 from app.repos.base_repo import BaseRepository
+from app.schemas.work_schema import WorkEdit, WorkEditWithRecurringWork
+
 
 class WorkRepository(BaseRepository):
 
@@ -36,7 +38,22 @@ class WorkRepository(BaseRepository):
       ).all())
       return works
 
-    def put_work(self,user_id:int,work_id:int,work_data : dict) -> Work:
+    def put_work(self,user_id:int,work_id:int,work_data : WorkEdit) -> Work:
+        db_work = self.get_active_query(Work).filter(
+            Work.user_id == user_id,
+            Work.id == work_id
+        ).first()
+        if not db_work:
+          raise ValueError("Work not found")
+
+        update_data = work_data.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_work, key, value)
+
+        self.db.commit()
+        self.db.refresh(db_work)
+        return db_work
+    def put_work_with_recurring_work(self,user_id:int,work_id:int,work_data : WorkEditWithRecurringWork) -> Work:
         db_work = self.get_active_query(Work).filter(
             Work.user_id == user_id,
             Work.id == work_id

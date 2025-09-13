@@ -5,14 +5,13 @@ from sqlalchemy.orm import Session
 from dateutil.relativedelta import relativedelta
 from app.models.recurringWork import RecurringWork
 from app.enums.recurrenceType import RecurrenceType
-from app.enums.work_status import WorkStatus
 from app.repos.recurring_work_repo import RecurringWorkRepository
 from app.repos.work_repo import WorkRepository
 from app.schemas.recurring_work_schema import *
 from app.enums.work_status import WorkStatus
 import calendar
 
-from app.schemas.work_schema import WorkCreate
+from app.schemas.work_schema import WorkEditWithRecurringWork
 
 
 class RecurringWorkService:
@@ -41,6 +40,36 @@ class RecurringWorkService:
         recurring_work_id = recurring_work.id
     )
     self.work_repo.create(create_work)
+    return RecurringWorkResponse.model_validate(recurring_work)
+
+  def create_recurring_work_without_work(self, recurring_work_data: RecurringWorkCreateWithoutWork) -> RecurringWorkResponse:
+    data = recurring_work_data.model_dump()
+    edit_work_id = data['work_id']
+    edit_work_status = data['current_status']
+    create_work_start = data['started_at']
+    create_work_deadline = data['deadline']
+    next_started_at = self._calculate_next_start_and_deadline_date(
+      recurring_work_data.recurrence_type, recurring_work_data.interval_value,
+      create_work_start)
+    data['next_execution_date'] = next_started_at - timedelta(days=1)
+    data['started_at'] = next_started_at
+    data['deadline'] = self._calculate_next_start_and_deadline_date(
+      recurring_work_data.recurrence_type, recurring_work_data.interval_value,
+      create_work_deadline)
+    data.pop('work_id', None)
+    data.pop('current_status', None)
+    recurring_work = self.recurring_work_repo.create(data)
+    update_work = WorkEditWithRecurringWork(
+        title=data['title'],
+        content=data['content'],
+        category_id=data['category_id'],
+        current_status= edit_work_status,
+        started_at=create_work_start,
+        deadline=create_work_deadline,
+        myjob=data['myjob'],
+        recurring_work_id=recurring_work.id
+    )
+    self.work_repo.put_work_with_recurring_work(recurring_work_data.user_id,edit_work_id,update_work)
     return RecurringWorkResponse.model_validate(recurring_work)
 
   def get_user_recurring_works(self, user_id:int) -> List[RecurringWorkResponse]:

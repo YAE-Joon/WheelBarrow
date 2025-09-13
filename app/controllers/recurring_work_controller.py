@@ -19,15 +19,15 @@ def create_recurring_work(
   recurring_work.user_id = user.id
   return service.create_recurring_work(recurring_work)
 
-@router.post("/", response_model=RecurringWorkResponse)
+@router.post("/edit", response_model=RecurringWorkResponse)
 def create_recurring_work_without_work(
-    recurring_work: RecurringWorkCreate,
+    recurring_work: RecurringWorkCreateWithoutWork,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
   service = RecurringWorkService(db)
   recurring_work.user_id = user.id
-  return service.create_recurring_work(recurring_work)
+  return service.create_recurring_work_without_work(recurring_work)
 
 @router.get("/", response_model=List[RecurringWorkResponse])
 def get_recurring_works(
